@@ -1,11 +1,11 @@
 #include "shell.h"
 
 /**
-* print_error_string - prints an error message string to stderr
-* @str: the string to be printed
-* Return: Nothing
+* _eputs - Displays the provided string.
+* @str: The string to be printed.
+* Returns: Nothing.
 */
-void print_error_string(char *str)
+void _eputs(char *str)
 {
 int i = 0;
 
@@ -13,19 +13,18 @@ if (!str)
 return;
 while (str[i] != '\0')
 {
-print_error_char(str[i]);
+_eputchar(str[i]);
 i++;
 }
 }
 
 /**
-* print_error_char - writes the character c to stderr
-* @c: The character to print
-*
-* Return: On success 1.
-* On error, -1 is returned, and errno is set appropriately.
+* _eputchar - Outputs the character 'c' to stderr.
+* @c: The character to be printed.
+* Return: Returns 1 on success.
+* On error, returns -1, and sets errno appropriately.
 */
-int print_error_char(char c)
+int _eputchar(char c)
 {
 static int i;
 static char buf[WRITE_BUF_SIZE];
@@ -41,13 +40,14 @@ return (1);
 }
 
 /**
-* print_to_fd - writes the character c to the given file descriptor
-* @c: The character to print
-* @fd: The file descriptor to write to
-* Return: On success 1.
-* On error, -1 is returned, and errno is set appropriately.
+* _putfd - Outputs the character 'c' to the specified file descriptor.
+* @c: The character to be written.
+* @fd: The file descriptor to write to.
+* Return: Returns 1 on success.
+* On error, returns -1 and sets errno appropriately.
 */
-int print_to_fd(char c, int fd)
+
+int _putfd(char c, int fd)
 {
 static int i;
 static char buf[WRITE_BUF_SIZE];
@@ -63,12 +63,12 @@ return (1);
 }
 
 /**
-* print_string_to_fd - prints an input string to the given file descriptor
-* @str: the string to be printed
-* @fd: the file descriptor to write to
-* Return: the number of characters written
+* _putsfd - Outputs the given string to the specified file descriptor.
+* @str: The string to be printed.
+* @fd: The file descriptor to write to.
+* Return: The number of characters written.
 */
-int print_string_to_fd(char *str, int fd)
+int _putsfd(char *str, int fd)
 {
 int i = 0;
 
@@ -76,7 +76,7 @@ if (!str)
 return (0);
 while (*str)
 {
-i += print_to_fd(*str++, fd);
+i += _putfd(*str++, fd);
 }
 return (i);
 }

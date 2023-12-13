@@ -1,94 +1,95 @@
 #include "shell.h"
 
 /**
-* custom_exit - exits the shell
-* @shell_info: Structure containing potential arguments.
-* Return: exits with a given exit status
+* _ourexit - Exits the shell based on the specified exit status.
+* @inform: Structure containing potential arguments. Maintains a constant function prototype.
+* Returns: Exits with a given exit status (0) if inform.argv[0] is not "exit".
 */
-int custom_exit(info_t *shell_info)
+int _ourexit(inform_t *inform)
 {
 int exit_check;
 
-if (shell_info->argv[1])  /* If there is an exit argument */
+if (inform->argv[1])
 {
-exit_check = _custom_atoi(shell_info->argv[1]);
+exit_check = _atoies(inform->argv[1]);
 if (exit_check == -1)
 {
-shell_info->status = 2;
-print_error_message(shell_info, "Illegal number: ");
-print_error_string(shell_info->argv[1]);
-print_error_char('\n');
+inform->status = 2;
+print_error(inform, "Illegal number: ");
+_eputs(inform->argv[1]);
+_eputchar('\n');
 return (1);
 }
-shell_info->err_num = _custom_atoi(shell_info->argv[1]);
+inform->err_num = _atoies(inform->argv[1]);
 return (-2);
 }
-shell_info->err_num = -1;
+inform->err_num = -1;
 return (-2);
 }
 
 /**
-* custom_cd - changes the current directory of the process
-* @shell_info: Structure containing potential arguments.
-* Return: Always 0
+* _ourcd - Changes the current directory of the process.
+* @inform: Structure containing potential arguments. Maintains a constant function prototype.
+* Returns: Always 0.
 */
-int custom_cd(info_t *shell_info)
+int _ourcd(inform_t *inform)
 {
-char *current_dir, *dir, buffer[1024];
+char *current_dir, *target_dir, buffer[1024];
 int chdir_ret;
 
 current_dir = getcwd(buffer, 1024);
 if (!current_dir)
 _puts("TODO: >>getcwd failure emsg here<<\n");
-if (!shell_info->argv[1])
+
+if (!inform->argv[1])
 {
-dir = _get_environment(shell_info, "HOME=");
-if (!dir)
-chdir_ret = /* TODO: what should this be? */
-chdir((dir = _get_environment(shell_info, "PWD=")) ? dir : "/");
+target_dir = _getenv(inform, "HOME=");
+if (!target_dir)
+chdir_ret = /* TODO: What should this be? */
+chdir((target_dir = _getenv(inform, "PWD=")) ? target_dir : "/");
 else
-chdir_ret = chdir(dir);
+chdir_ret = chdir(target_dir);
 }
-else if (str_compare(shell_info->argv[1], "-") == 0)
+else if (_strcmp(inform->argv[1], "-") == 0)
 {
-if (!_get_environment(shell_info, "OLDPWD="))
+if (!_getenv(inform, "OLDPWD="))
 {
 _puts(current_dir);
 _putchar('\n');
 return (1);
 }
-_puts(_get_environment(shell_info, "OLDPWD=")), _putchar('\n');
-chdir_ret = /* TODO: what should this be? */
-chdir((dir = _get_environment(shell_info, "OLDPWD=")) ? dir : "/");
+_puts(_getenv(inform, "OLDPWD=")), _putchar('\n');
+chdir_ret = /* TODO: What should this be? */
+chdir((target_dir = _getenv(inform, "OLDPWD=")) ? target_dir : "/");
 }
 else
-chdir_ret = chdir(shell_info->argv[1]);
+chdir_ret = chdir(inform->argv[1]);
+
 if (chdir_ret == -1)
 {
-print_error_message(shell_info, "can't cd to ");
-print_error_string(shell_info->argv[1]), print_error_char('\n');
+print_error(inform, "can't cd to ");
+_eputs(inform->argv[1]), _eputchar('\n');
 }
 else
 {
-set_environment_variable(shell_info, "OLDPWD", _get_environment(shell_info, "PWD="));
-set_environment_variable(shell_info, "PWD", getcwd(buffer, 1024));
+_setenv(inform, "OLDPWD", _getenv(inform, "PWD="));
+_setenv(inform, "PWD", getcwd(buffer, 1024));
 }
 return (0);
 }
 
 /**
-* custom_help - displays help information
-* @shell_info: Structure containing potential arguments.
-* Return: Always 0
+* _ourhelp - Displays help information for the shell.
+* @inform: Structure containing potential arguments. Maintains a constant function prototype.
+* Returns: Always 0.
 */
-int custom_help(info_t *shell_info)
+int _ourhelp(inform_t *inform)
 {
 char **arg_array;
 
-arg_array = shell_info->argv;
-_puts("help call works. Function not yet implemented \n");
+arg_array = inform->argv;
+_puts("Help call works. Function not yet implemented.\n");
 if (0)
-_puts(*arg_array); /* temp att_unused workaround */
+_puts(*arg_array);
 return (0);
 }
-

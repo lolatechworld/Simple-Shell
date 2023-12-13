@@ -1,73 +1,74 @@
 #include "shell.h"
 
 /**
-* initialize_info - Clears and initializes the info_t struct
-* @shell_info: The struct address to be initialized
+* clear_inform - Initializes the info_t struct.
+* @inform: Address of the struct to be initialized.
 */
-void initialize_info(info_t *shell_info)
+void clear_inform(inform_t *inform)
 {
-shell_info->arg = NULL;
-shell_info->argv = NULL;
-shell_info->path = NULL;
-shell_info->argc = 0;
+inform->arg = NULL;
+inform->argv = NULL;
+inform->path = NULL;
+inform->argc = 0;
 }
 
 /**
-* populate_info - Initializes the info_t struct with arguments
-* @shell_info: The struct address to be populated
-* @argument_vector: The argument vector
+* set_inform - Initializes the inform_t struct.
+* @inform: Address of the struct.
+* @av: Argument vector.
 */
-void populate_info(info_t *shell_info, char **argument_vector)
+void set_inform(inform_t *inform, char **av)
 {
 int i = 0;
 
-shell_info->fname = argument_vector[0];
-if (shell_info->arg)
+inform->fname = av[0];
+if (inform->arg)
 {
-shell_info->argv = split_string(shell_info->arg, " \t");
-if (!shell_info->argv)
+inform->argv = strtow(inform->arg, " \t");
+if (!inform->argv)
 {
-shell_info->argv = malloc(sizeof(char *) * 2);
-if (shell_info->argv)
-{
-shell_info->argv[0] = string_duplicate(shell_info->arg);
-shell_info->argv[1] = NULL;
-}
-}
-for (i = 0; shell_info->argv && shell_info->argv[i]; i++)
-;
-shell_info->argc = i;
 
-replace_cmd_alias(shell_info);
-replace_cmd_vars(shell_info);
+inform->argv = malloc(sizeof(char *) * 2);
+if (inform->argv)
+{
+inform->argv[0] = _strdup(inform->arg);
+inform->argv[1] = NULL;
+}
+}
+for (i = 0; inform->argv && inform->argv[i]; i++)
+                        ;
+inform->argc = i;
+
+replace_alias(inform);
+replace_vars(inform);
 }
 }
 
 /**
-* release_info - Frees memory allocated for fields in the info_t struct
-* @shell_info: The struct address to be released
-* @all: True if freeing all fields
+* free_inform - Frees fields within the inform_t struct.
+* @inform: Address of the struct.
+* @all: True if freeing all fields.
 */
-void release_info(info_t *shell_info, int all)
+void free_inform(inform_t *inform, int all)
 {
-ffree(shell_info->argv);
-shell_info->argv = NULL;
-shell_info->path = NULL;
+ffree(inform->argv);
+inform->argv = NULL;
+inform->path = NULL;
 if (all)
 {
-if (!shell_info->cmd_buf)
-free(shell_info->arg);
-if (shell_info->env)
-free_list_nodes(&(shell_info->env));
-if (shell_info->command_history)
-free_list_nodes(&(shell_info->command_history));
-if (shell_info->alias)
-free_list_nodes(&(shell_info->alias));
-ffree(shell_info->environ);
-shell_info->environ = NULL;
-free_and_nullify((void **)shell_info->cmd_buf);
-if (shell_info->readfd > 2)
-close(shell_info->readfd);
+if (!inform->cmd_buf)
+free(inform->arg);
+if (inform->env)
+free_list(&(inform->env));
+if (inform->history)
+free_list(&(inform->history));
+if (inform->alias)
+free_list(&(inform->alias));
+ffree(inform->environ);
+inform->environ = NULL;
+bfree((void **)inform->cmd_buf);
+if (inform->readfd > 2)
+close(inform->readfd);
 _putchar(BUF_FLUSH);
 }
 }
